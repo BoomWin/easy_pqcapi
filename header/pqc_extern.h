@@ -37,16 +37,13 @@ extern int Sign_Signature(
     const uint8_t *sk,
     unsigned int algorithm);
 
-
-
-
-
-
-
-
-
-
-
+extern int Sign_Verify(
+    const uint8_t *sig,
+    size_t siglen,
+    const uint8_t *m,
+    size_t mlen,
+    const uint8_t *pk,
+    unsigned int algorithm);
 
 
 #endif // _PQC_EXTERN_H_
