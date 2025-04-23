@@ -10,24 +10,26 @@ COMMON_DIR = ../common
 
 # 포함 디렉토리
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(KEM_DIR)/ml-kem-512/clean -I$(KEM_DIR)/ml-kem-768/clean -I$(KEM_DIR)/ml-kem-1024/clean \
-           -I$(SIGN_DIR)/ml-dsa-44/clean -I$(SIGN_DIR)/ml-dsa-65/clean -I$(SIGN_DIR)/ml-dsa-87/clean -I$(COMMON_DIR)
-
+INCLUDES = -I$(INCLUDE_DIR) \
+           -I$(KEM_DIR)/ml-kem-512 -I$(KEM_DIR)/ml-kem-768 -I$(KEM_DIR)/ml-kem-1024 \
+           -I$(SIGN_DIR)/ml-dsa-44 -I$(SIGN_DIR)/ml-dsa-65 -I$(SIGN_DIR)/ml-dsa-87 \
+           -I$(COMMON_DIR)
 # PQC API 소스 파일
 PQCAPI_SRC = $(SRC_DIR)/src/pqcapi.c
 
 # ML-KEM 소스 파일
-KEM_512_SRC = $(wildcard $(KEM_DIR)/ml-kem-512/clean/*.c)
-KEM_768_SRC = $(wildcard $(KEM_DIR)/ml-kem-768/clean/*.c)
-KEM_1024_SRC = $(wildcard $(KEM_DIR)/ml-kem-1024/clean/*.c)
+KEM_512_SRC = $(wildcard $(KEM_DIR)/ml-kem-512/*.c)
+KEM_768_SRC = $(wildcard $(KEM_DIR)/ml-kem-768/*.c)
+KEM_1024_SRC = $(wildcard $(KEM_DIR)/ml-kem-1024/*.c)
 
 # ML-DSA 소스 파일
-DSA_44_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-44/clean/*.c)
-DSA_65_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-65/clean/*.c)
-DSA_87_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-87/clean/*.c)
+DSA_44_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-44/*.c)
+DSA_65_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-65/*.c)
+DSA_87_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-87/*.c)
 
 # 공통 소스 파일
-COMMON_SRC = $(wildcard $(COMMON_DIR)/*.c) $(wildcard $(COMMON_DIR)/keccak2x/*.c) $(wildcard $(COMMON_DIR)/keccak4x/*.c)
+COMMON_SRC = $(wildcard $(COMMON_DIR)/*.c)
+#  $(wildcard $(COMMON_DIR)/keccak2x/*.c) $(wildcard $(COMMON_DIR)/keccak4x/*.c)
 
 # 테스트 소스 파일
 TEST_SRC = test_pqcapi.c
@@ -52,7 +54,7 @@ $(TEST_EXEC): $(TEST_OBJ) $(OBJS)
 
 
 # 테스트 소스 컴파일
-%.o: %.cc
+%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # 테스트 실행

@@ -2,14 +2,14 @@
 #include "../include/pqc_extern.h"
 
 // ML-KEM 관련 헤더 포함
-#include "../crypto_kem/ml-kem-512/clean/api.h"
-#include "../crypto_kem/ml-kem-768/clean/api.h"
-#include "../crypto_kem/ml-kem-1024/clean/api.h"
+#include "../crypto_kem/ml-kem-512/api.h"
+#include "../crypto_kem/ml-kem-768/api.h"
+#include "../crypto_kem/ml-kem-1024/api.h"
 
 // ML-DSA 관련 헤더 포함
-#include "../crypto_sign/ml-dsa-44/clean/api.h"
-#include "../crypto_sign/ml-dsa-65/clean/api.h"
-#include "../crypto_sign/ml-dsa-87/clean/api.h"
+#include "../crypto_sign/ml-dsa-44/api.h"
+#include "../crypto_sign/ml-dsa-65/api.h"
+#include "../crypto_sign/ml-dsa-87/api.h"
 
 int Kem_Keypair(
     uint8_t *pk,

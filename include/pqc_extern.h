@@ -51,5 +51,4 @@ extern int Sign_Verify(
     const uint8_t *pk,
     unsigned int algorithm);
 
-
 #endif // _PQC_EXTERN_H_
