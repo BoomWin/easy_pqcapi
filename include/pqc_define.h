@@ -7,11 +7,11 @@
 #define ALG_MLKEM1024           3
 #define ALG_MLDSA44             4
 #define ALG_MLDSA65             5
-#define ALG_MLDSA86             6
+#define ALG_MLDSA87             6
 
 // 오류 코드 정의
-#define EASY_OK                 0x00000000
-#define EASY_DEFAULT_ERROR      0xFFFFFFFF
+#define OK                 0x00000000
+#define DEFAULT_ERROR      0xFFFFFFFF
 
 // KEM 키 길이 정의
 #define MLKEM512_PUBLIC_KEY_BYTES 800
