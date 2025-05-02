@@ -1,5 +1,112 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -O3 -fPIC
+# 패키지 및 라이브러리 정보
+PACKAGE_NAME = libpqcapi
+PACKAGE_VERSION = 1.0
+PACKAGE_DIR = package
+VERSION = 1.0
+
+# 플랫폼 설정 (기본값은 직접 명령어로 선택하도록 함)
+PLATFORM ?= unknown_platform
+
+# 대상 파일명
+TARGET_SO = $(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PLATFORM).so
+
+# 지원되는 모든 플랫폼
+SUPPORTED_PLATFORMS = x64_linux_type1 x64_linux_type2 x64_linux_type3 \
+					armv7l_linux_type1 armv7l_linux_type2 armv7l_linux_type3 \
+					armv7l_linux_type4 armv7l_linux_type5 armv7l_linux_type6 \
+					armv7l_linux_type7 \
+					aarch64_linux_type1 aarch64_linux_type2
+
+# 플랫폼별 컴파일러 및 플래그 설정
+define set_platform_x64_linux_type1
+	PLATFORM_DESC = Ubuntu 20.04
+	CROSS_COMPILE =
+	CFLAGS_PLATFORM = -march=x86-64
+endef
+
+define set_platform_x64_linux_type2
+	PLATFORM_DESC = Ubuntu 22.04
+	CROSS_COMPILE = 
+	CFLAGS_PLATFORM = -march=x86-64 -mtune=generic
+endef
+
+define set_platform_x64_linux_type3
+	PLATFORM_DESC = Ubuntu 24.04
+	CROSS_COMPILE = 
+	CFLAGS_PLATFORM = -march=x86-64-v3
+endef
+
+
+define set_platform_armv7l_linux_type1
+    PLATFORM_DESC = DUSS
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mfpu=neon -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type2
+    PLATFORM_DESC = LTE
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a7 -mfpu=neon -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type3
+    PLATFORM_DESC = Raspberry Pi 4.19
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type4
+    PLATFORM_DESC = Raspberry Pi 4.9
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type5
+    PLATFORM_DESC = Raspberry Pi 5.10
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type6
+    PLATFORM_DESC = SAMA7G54-EK 5.15
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+endef
+
+define set_platform_armv7l_linux_type7
+    PLATFORM_DESC = Raspberry Pi 6.6
+    CROSS_COMPILE = arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a72 -mfpu=neon-vfpv4 -mfloat-abi=hard
+endef
+
+define set_platform_aarch64_linux_type1
+    PLATFORM_DESC = Raspberry Pi 4.9 (64bit)
+    CROSS_COMPILE = aarch64-linux-gnu-
+    CFLAGS_PLATFORM = -march=armv8-a
+endef
+
+define set_platform_aarch64_linux_type2
+    PLATFORM_DESC = Raspberry Pi 5.10 (64bit)
+    CROSS_COMPILE = aarch64-linux-gnu-
+    CFLAGS_PLATFORM = -march=armv8-a+crc
+endef
+
+define set_platform_unknown_platform
+	PLATFORM_DESC = Unknown Platform
+	CROSS_COMPILE =
+	CFLAGS_PLATFORM =
+endef
+
+# 플랫폼 설정 적용
+$(eval $(call set_platform_$(PLATFORM)))
+
+# 컴파일러 및 도구 설정
+CC = $(CROSS_COMPILE)gcc
+STRIP = $(CROSS_COMPILE)strip
+
+# 컴파일 플래그
+COMPILE_FLAGS = -O2 -fpic -fomit-frame-pointer -Wno-stringop-overflow -fcommon $(CFLAGS_PLATFORM)
+CFLAGS = $(COMPILE_FLAGS) -Wall -Wextra
 LDFLAGS = -shared
 
 # 디렉토리 정의
@@ -30,7 +137,6 @@ DSA_87_SRC = $(wildcard $(SIGN_DIR)/ml-dsa-87/*.c)
 
 # 공통 소스 파일
 COMMON_SRC = $(wildcard $(COMMON_DIR)/*.c)
-#  $(wildcard $(COMMON_DIR)/keccak2x/*.c) $(wildcard $(COMMON_DIR)/keccak4x/*.c)
 
 # 소스 파일 통합
 ALL_SRC = $(PQCAPI_SRC) $(KEM_512_SRC) $(KEM_768_SRC) $(KEM_1024_SRC) $(DSA_44_SRC) $(DSA_65_SRC) $(DSA_87_SRC) $(COMMON_SRC)
@@ -38,54 +144,134 @@ ALL_SRC = $(PQCAPI_SRC) $(KEM_512_SRC) $(KEM_768_SRC) $(KEM_1024_SRC) $(DSA_44_S
 # 목적 파일
 OBJS = $(ALL_SRC:.c=.o)
 
-# 라이브러리 이름
-LIB_NAME = libpqcapi.so
-LIB_VERSION = 1.0.0
-LIB_SONAME = $(LIB_NAME).1
-LIB_FULL = $(LIB_NAME).$(LIB_VERSION)
+# 기본 타겟 - 도움말 표시
+.PHONY: default
+default:
+	@echo "오류: 플랫폼과 명령을 지정해주세요."
+	@echo "사용 가능한 옵션을 보려면 'make help'를 실행하세요."
+	@exit 1
 
-# 기본 타겟
-all: $(LIB_FULL)
+.PHONY: all clean prepare build_all static test install pack clean_all help reset $(SUPPORTED_PLATFORMS)
 
-# 공유 라이브러리 빌드
-$(LIB_FULL): $(OBJS)
-	$(CC) $(LDFLAGS) -Wl,-soname,$(LIB_SONAME) -o $@ $^
-	ln -sf $(LIB_FULL) $(LIB_SONAME)
-	ln -sf $(LIB_SONAME) $(LIB_NAME)
+# 플랫폼별 타겟 정의 - 이제 직접 빌드 실행
+$(SUPPORTED_PLATFORMS):
+	@$(MAKE) PLATFORM=$@ build
 
-# 소스 컴파일
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+# 실제 빌드 실행
+build:
+	@echo "플랫폼 $(PLATFORM_DESC)용 $(PLATFORM) 빌드 시작..."
+	@mkdir -p $(PACKAGE_DIR)
+	@for src in $(ALL_SRC); do \
+		echo "컴파일: $$src"; \
+		$(CC) $(CFLAGS) $(INCLUDES) -c $$src -o $${src%.c}.o; \
+	done
+	@echo "공유 라이브러리 빌드 중..."
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-soname,$(TARGET_SO) -o $(PACKAGE_DIR)/$(TARGET_SO) $(OBJS)
+	$(STRIP) --strip-all $(PACKAGE_DIR)/$(TARGET_SO)
+	chmod 644 $(PACKAGE_DIR)/$(TARGET_SO)
+	@echo "✔ 빌드 완료: $(PACKAGE_DIR)/$(TARGET_SO)"
+	@echo "임시 오브젝트 파일 정리 중..."
+	@rm -f $(OBJS)
+
+# 모든 플랫폼 빌드
+build_all:
+	@for platform in $(SUPPORTED_PLATFORMS); do \
+		echo "$$platform 빌드 중..."; \
+		$(MAKE) PLATFORM=$$platform $$platform; \
+	done
+	@echo "모든 빌드가 완료되었습니다."
 
 # 정적 라이브러리 빌드
-static: $(OBJS)
-	ar rcs libpqcapi.a $(OBJS)
+static:
+	@if [ "$(PLATFORM)" = "unknown_platform" ]; then \
+		echo "오류: 유효한 플랫폼을 지정해주세요."; \
+		echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
+		exit 1; \
+	fi
+	@mkdir -p $(PACKAGE_DIR)
+	@for src in $(ALL_SRC); do \
+		echo "컴파일: $$src"; \
+		$(CC) $(CFLAGS) $(INCLUDES) -c $$src -o $${src%.c}.o; \
+	done
+	ar rcs $(PACKAGE_DIR)/$(PACKAGE_NAME)-$(PLATFORM).a $(OBJS)
+	@echo "✔ 정적 라이브러리 빌드 완료: $(PACKAGE_DIR)/$(PACKAGE_NAME)-$(PLATFORM).a"
+	@rm -f $(OBJS)
+
 
 # 테스트 빌드
-test: $(LIB_FULL)
-	$(CC) $(CFLAGS) $(INCLUDES) -o test/test_pqcapi test/test_pqcapi.c -L. -lpqcapi
+test:
+	@if [ "$(PLATFORM)" = "unknown_platform" ]; then \
+		echo "오류: 유효한 플랫폼을 지정해주세요."; \
+		echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
+		exit 1; \
+	fi
+	@mkdir -p test
+	$(CC) $(CFLAGS) $(INCLUDES) -o test/test_pqcapi_$(PLATFORM) test/test_pqcapi.c -L$(PACKAGE_DIR) -l:$(TARGET_SO)
+	@echo "✔ 테스트 빌드 완료: test/test_pqcapi_$(PLATFORM)"
+	@echo "테스트 실행 중..."
+	@LD_LIBRARY_PATH=$(PACKAGE_DIR) test/test_pqcapi_$(PLATFORM)
 
-# 설치 (시스템 라이브러리 경로에 설치)
-install: $(LIB_FULL)
-	install -d $(DESTDIR)/usr/lib
-	install -d $(DESTDIR)/usr/include
-	install -m 755 $(LIB_FULL) $(DESTDIR)/usr/lib
-	ln -sf $(LIB_FULL) $(DESTDIR)/usr/lib/$(LIB_SONAME)
-	ln -sf $(LIB_SONAME) $(DESTDIR)/usr/lib/$(LIB_NAME)
-	install -m 644 $(INCLUDE_DIR)/pqc_define.h $(DESTDIR)/usr/include
-	install -m 644 $(INCLUDE_DIR)/pqc_extern.h $(DESTDIR)/usr/include
+# 설치
+install:
+	@if [ "$(PLATFORM)" = "unknown_platform" ]; then \
+		echo "오류: 유효한 플랫폼을 지정해주세요."; \
+		echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
+		exit 1; \
+	fi
+	install -d $(DESTDIR)/usr/lib/$(PACKAGE_NAME)
+	install -d $(DESTDIR)/usr/include/$(PACKAGE_NAME)
+	install -m 755 $(PACKAGE_DIR)/$(TARGET_SO) $(DESTDIR)/usr/lib/$(PACKAGE_NAME)
+	install -m 644 $(INCLUDE_DIR)/pqc_define.h $(DESTDIR)/usr/include/$(PACKAGE_NAME)
+	install -m 644 $(INCLUDE_DIR)/pqc_extern.h $(DESTDIR)/usr/include/$(PACKAGE_NAME)
 	ldconfig
-
-
-# 라이브러리 파일과 라이브러리 헤더만 복사하기
-pack:
-	mkdir -p pqcapi_lib/include
-	cp $(LIB_FULL) $(LIB_SONAME) $(LIB_NAME) libpqcapi.a pqcapi_lib/ 2>/dev/null || true
-	cp $(INCLUDE_DIR)/pqc_define.h $(INCLUDE_DIR)/pqc_extern.h pqcapi_lib/include/
+	@echo "✔ $(PLATFORM) ($(PLATFORM_DESC)) 설치가 완료되었습니다."
 
 # 정리
 clean:
-	rm -f $(OBJS) $(LIB_FULL) $(LIB_SONAME) $(LIB_NAME) libpqcapi.a test/test_pqcapi
-	rm -rf pqcapi_lib
+	@if [ "$(PLATFORM)" = "unknown_platform" ]; then \
+		echo "오류: 유효한 플랫폼을 지정해주세요."; \
+		echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
+		exit 1; \
+	fi
+	rm -f $(OBJS)
+	rm -f $(PACKAGE_DIR)/$(TARGET_SO)
+	rm -f $(PACKAGE_DIR)/$(PACKAGE_NAME)-$(PLATFORM).a
+	rm -f test/test_pqcapi_$(PLATFORM)
+	rm -rf $(PACKAGE_DIR)/$(PACKAGE_NAME)_$(PLATFORM)
+	@echo "✔ $(PLATFORM) 빌드 파일이 정리되었습니다."
 
-.PHONY: all static test install pack clean
+# 모든 플랫폼 빌드 결과물 정리
+clean_all:
+	rm -f $(OBJS)
+	rm -f $(PACKAGE_DIR)/$(PACKAGE_NAME)_*.so
+	rm -f $(PACKAGE_DIR)/$(PACKAGE_NAME)-*.a
+	rm -f test/test_pqcapi_*
+	rm -rf $(PACKAGE_DIR)/$(PACKAGE_NAME)_*
+	@echo "✔ 모든 빌드 파일이 정리되었습니다."
+
+# 도움말
+help:
+	@echo "사용법: make [플랫폼] [옵션]"
+	@echo ""
+	@echo "플랫폼 목록:"
+	@for p in $(SUPPORTED_PLATFORMS); do \
+		$(MAKE) -s PLATFORM=$$p eval_desc; \
+	done
+	@echo ""
+	@echo "옵션:"
+	@echo "  static                정적 라이브러리 빌드"
+	@echo "  test                  테스트 애플리케이션 빌드 및 실행"
+	@echo "  clean                 현재 플랫폼의 빌드 파일 정리"
+	@echo "  clean_all             모든 플랫폼의 빌드 파일 정리"
+	@echo "  install               시스템에 라이브러리 설치"
+	@echo "  build_all             모든 플랫폼 빌드"
+	@echo "  help                  이 도움말 표시"
+	@echo ""
+	@echo "예시:"
+	@echo "  make x64_linux_type2          x64_linux_type2 플랫폼용 빌드"
+	@echo "  make x64_linux_type2 install  x64_linux_type2 플랫폼용 빌드 및 설치"
+	@echo "  make PLATFORM=armv7l_linux_type5 pack  armv7l_linux_type5 플랫폼용 패키지 생성"
+
+.PHONY: eval_desc
+eval_desc:
+	@echo "  $(PLATFORM)    $(PLATFORM_DESC)"
