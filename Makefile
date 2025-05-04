@@ -1,3 +1,6 @@
+# KMULIB V2.2 참고해서 Makefile 작성
+
+
 # 패키지 및 라이브러리 정보
 PACKAGE_NAME = libpqcapi
 PACKAGE_VERSION = 1.0
@@ -36,59 +39,58 @@ define set_platform_x64_linux_type3
 	CFLAGS_PLATFORM = -march=x86-64-v3
 endef
 
-
 define set_platform_armv7l_linux_type1
     PLATFORM_DESC = DUSS
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mfpu=neon -mfloat-abi=hard
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_armv7l_linux_type2
     PLATFORM_DESC = LTE
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a7 -mfpu=neon -mfloat-abi=hard
+    CROSS_COMPILE = /usr/local/oecore-x86_64/sysroots/x86_64-oesdk-linux/usr/bin/arm-oe-linux-gnueabi/arm-oe-linux-gnueabi-
+    CFLAGS_PLATFORM = -march=armv7-a -mfloat-abi=softfp -mfpu=neon --sysroot=/usr/local/oecore-x86_64/sysroots/armv7a-vfp-neon-oe-linux-gnueabi
 endef
 
 define set_platform_armv7l_linux_type3
     PLATFORM_DESC = Raspberry Pi 4.19
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_armv7l_linux_type4
     PLATFORM_DESC = Raspberry Pi 4.9
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_armv7l_linux_type5
     PLATFORM_DESC = Raspberry Pi 5.10
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_armv7l_linux_type6
     PLATFORM_DESC = SAMA7G54-EK 5.15
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+    CROSS_COMPILE = ../toolchain/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_armv7l_linux_type7
     PLATFORM_DESC = Raspberry Pi 6.6
-    CROSS_COMPILE = arm-linux-gnueabihf-
-    CFLAGS_PLATFORM = -march=armv7-a -mcpu=cortex-a72 -mfpu=neon-vfpv4 -mfloat-abi=hard
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_aarch64_linux_type1
     PLATFORM_DESC = Raspberry Pi 4.9 (64bit)
-    CROSS_COMPILE = aarch64-linux-gnu-
-    CFLAGS_PLATFORM = -march=armv8-a
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_aarch64_linux_type2
     PLATFORM_DESC = Raspberry Pi 5.10 (64bit)
-    CROSS_COMPILE = aarch64-linux-gnu-
-    CFLAGS_PLATFORM = -march=armv8-a+crc
+    CROSS_COMPILE = 
+    CFLAGS_PLATFORM = 
 endef
 
 define set_platform_unknown_platform
@@ -228,11 +230,11 @@ install:
 
 # 정리
 clean:
-	@if [ "$(PLATFORM)" = "unknown_platform" ]; then \
-		echo "오류: 유효한 플랫폼을 지정해주세요."; \
-		echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
-		exit 1; \
-	fi
+	# @if [ "$(PLATFORM)" = "unknown_platform" ]; then \
+	# 	echo "오류: 유효한 플랫폼을 지정해주세요."; \
+	# 	echo "사용 가능한 플랫폼을 보려면 'make help'를 실행하세요."; \
+	# 	exit 1; \
+	# fi
 	rm -f $(OBJS)
 	rm -f $(PACKAGE_DIR)/$(TARGET_SO)
 	rm -f $(PACKAGE_DIR)/$(PACKAGE_NAME)-$(PLATFORM).a

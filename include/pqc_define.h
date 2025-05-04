@@ -9,10 +9,6 @@
 #define ALG_MLDSA65             5
 #define ALG_MLDSA87             6
 
-// 오류 코드 정의
-#define OK                 0x00000000
-#define DEFAULT_ERROR      0xFFFFFFFF
-
 // KEM 키 길이 정의
 #define MLKEM512_PUBLIC_KEY_BYTES 800
 #define MLKEM512_CIPHERTEXT_BYTES 768
