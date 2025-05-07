@@ -1,12 +1,11 @@
-# easy_pqcapi
 
-# libpqcapi - 포스트 양자 암호 API 라이브러리
+# libpqcapi - 양자 내성 암호 API 라이브러리
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-1.0-green.svg)
 
 **libpqcapi**는 NIST 표준에 따라 설계된 포스트 양자 암호(PQC) 알고리즘 구현 라이브러리입니다.  
-ML-KEM(Kyber 기반)과 ML-DSA(Dilithium 기반)를 지원하여 안전한 키 교환과 디지털 서명을 제공합니다.
+ML-KEM(Kyber 기반)과 ML-DSA(Dilithium 기반)를 지원하여 안전한 키 교환과 디지털 서명을 제공합니다.    
 해당 라이브러리의 암호 기능을 담당하는 핵심 연산부는 PQCLEAN을 사용하여 제작하였습니다.
 
 ---
