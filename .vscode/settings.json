@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "pqc_extern.h": "c"
+        "pqc_extern.h": "c",
+        "api.h": "c"
     }
 }

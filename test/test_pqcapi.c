@@ -21,6 +21,7 @@ void test_mlkem512() {
         printf("ML-KEM-512 키페어 생성 실패: 0x%08x\n", result);
         exit(1);
     }
+
     printf("ML-KEM-512 키페어 생성 성공\n");
     
     // 캡슐화 테스트
